@@ -1,0 +1,39 @@
+
+<mat-toolbar color="primary">
+    <span><a routerLink="/" style="text-decoration: none; color: blanchedalmond;">Social Media App</a></span>
+    <span class="spacer"></span>
+    <ul>
+      <li *ngIf="userIsAuthenticated">
+        <a style="text-decoration: none; color:white;" routerLink="" >User Name: {{username?.fname | titlecase}} {{username?.lname | titlecase}}</a>
+      </li>
+    </ul>
+    <ul>
+        <li *ngIf="!userIsAuthenticated">
+          <a style="text-decoration: none;" routerLink="" >Guest View</a>
+        </li>
+    </ul>
+    <span class="spacer"></span>
+    <ul>
+          <li *ngIf="userIsAuthenticated && userRole === 'admin' ">
+            <a mat-button routerLink="/addnewuser" routerLinkActive="mat-accent">Add New User</a>
+          </li>
+          <!-- <li *ngIf="userIsAuthenticated && userRole === 'user' ">
+            <a mat-button [routerLink]="['/editprofile', userId]"routerLinkActive="mat-accent">Edit Profile</a>
+          </li> -->
+          <li *ngIf="(userIsAuthenticated) && !(userRole==='admin' || userRole === 'editor' || userRole === 'manager' )">
+            <a mat-button routerLink="/addstatus" routerLinkActive="mat-accent">Add Status</a>
+          </li>
+          <li *ngIf="(userIsAuthenticated) && !(userRole==='admin' || userRole === 'editor' || userRole === 'manager' )">
+            <a mat-button routerLink="/addpost" routerLinkActive="mat-accent">Add Post</a>
+          </li>
+          <li *ngIf="!userIsAuthenticated">
+            <a mat-button routerLink="/login" routerLinkActive="mat-accent">Login</a>
+          </li>
+          <li *ngIf="!userIsAuthenticated">
+            <a mat-button routerLink="/signup" routerLinkActive="mat-accent">Signup</a>
+          </li>
+          <li *ngIf="userIsAuthenticated">
+            <button mat-button (click)="onLogout()">Logout</button>
+          </li>
+    </ul>
+</mat-toolbar>

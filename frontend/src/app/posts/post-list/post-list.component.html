@@ -1,0 +1,151 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+
+
+    <!-- ----------------------------------------------------------------------------- -->
+    <!-- ----------------------------------------------------------------------------- -->
+<div *ngIf="posts.length>0">
+    <!-- loop start -->
+<div class="container-fluid" style="background-color: #f2f3f5;">
+<div style="margin-top: 1rem;"></div>
+<mat-card *ngFor="let post of posts; index as i;">
+    <div >
+    <div class="row" (click)="openPost(post.id)">
+        <!-- <img class="img-fluid profilepic" [src]="post.userPic" alt="Image not avialable"> -->
+        <span class="col-md-7" style="font-size: 20px; font-weight: bold;">{{post.postUser | titlecase}}</span>
+        <span class="col-md-5" style="padding: 2px auto auto auto;"> 
+            <a style="text-decoration: none;" mat-button color="primary" *ngIf="(post.postType === 'status') && (userIsAuthenticated) && (userId === post.creator || userRole === 'admin' || userRole === 'editor') " [routerLink]="['/editstatus', post.id]"> EDIT POST</a>
+            <a style="text-decoration: none;" mat-button color="primary" *ngIf="(post.postType === 'post') && (userIsAuthenticated) && (userId === post.creator || userRole === 'admin' || userRole === 'editor') " [routerLink]="['/edit', post.id]"> EDIT POST</a>
+            <button mat-button color="warn" *ngIf="(userIsAuthenticated) && (userId === post.creator || userRole === 'admin' || userRole === 'manager')" (click)="onDelete(post.id)">DELETE POST</button>
+        </span>
+        <span class="col-md-8">{{post.createdAt | date:'medium'}}</span>
+        <span class="glyphicon glyphicon-eye-open"></span><span class="col-md-3 postview" (mouseover)="userViewList=true" (mouseout)="userViewList=false">PostViews-{{post.views}}</span>
+        <div *ngIf="(userViewList) && (userIsAuthenticated) && (userRole === 'admin' || userRole === 'editor' || userRole === 'manager')" style="margin-left: 500px; margin-top: 60px; padding: 4px; border-radius: 3px; background-color: black; color: white; position: absolute; z-index: 100; list-style-type: circle;">
+            users who viewed post 
+            <div *ngFor="let user of post.viewedBy">
+                {{user}}                
+            </div>
+        </div>
+    </div>
+    <hr>
+    <mat-card-content *ngIf="!(post.content === 'null')" class="content" (click)="openPost(post.id)">
+        {{post.content}}
+    </mat-card-content>
+    <div *ngIf="post.imagePath" class="post-image" (click)="openPost(post.id)">
+        <img class="img-fluid" [src]="post.imagePath" alt="Image not avialable">
+    </div>
+    <!-- <div style="padding: 2px auto auto auto;" *ngIf="userIsAuthenticated && userId === post.creator"> 
+        <a style="text-decoration: none;" mat-button color="primary" [routerLink]="['/edit', post.id]">EDIT POST</a>
+        <button mat-button color="warn" (click)="onDelete(post.id)">DELETE POST</button>
+    </div> -->
+
+
+<div class="row" style="padding-top: 8px;">
+    <div class="col-md-6" style="text-align: center;">
+        <!-- <div *ngFor="let likeuser of post.likedBy"></div> -->
+        <button [ngClass]="{ 'likeClass' : changelikecolor }" type="button" name="button" class="btn btn-md btn-success likebutton" (click)="likePost(post.id)"><span class="glyphicon glyphicon-thumbs-up"></span>   Like</button>
+        <span  (mouseover)="changeTextlike=true" (mouseout)="changeTextlike=false" class="mx-1">Total Likes: {{post.likes}}</span>
+        <div *ngIf="(changeTextlike) && (userIsAuthenticated) && (userRole === 'admin' || userRole === 'editor' || userRole === 'manager')" style="margin-left: 150px; padding: 4px; border-radius: 3px; background-color: black; color: white; position: absolute; z-index: 100; list-style-type: circle;">
+            users who liked post 
+            <div *ngFor="let user of post.likedBy" [ngClass]="{ 'likeClass' : user === currentuser }">
+                {{user}}
+                <div *ngIf=" user === currentuser ">
+                    <div ng-init="changelikecolor= 'true' "></div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-md-6" style="text-align: center;">
+        <button type="button" name="button" class="btn btn-md btn-danger"  (click)="dislikePost(post.id)"><span class="glyphicon glyphicon-thumbs-down"></span> Dislike </button>
+        <span (mouseover)="changeTextdislike=true" (mouseout)="changeTextdislike=false" class="mx-1">Total Dislikes: {{post.dislikes}}</span>
+        <div *ngIf="(changeTextdislike) && (userIsAuthenticated) && (userRole === 'admin' || userRole === 'editor' || userRole === 'manager')" style="margin-left: 150px; padding: 4px; border-radius: 3px; background-color: black; color: white; position: absolute; z-index: 100; list-style-type: circle;">
+            users who dis-liked post 
+            <div *ngFor="let user of post.dislikedBy">{{user}}</div>
+        </div>
+    </div>
+</div>
+    
+<div class="mt-3 row" *ngIf="(userIsAuthenticated) && !(userRole === 'admin' || userRole === 'editor' || userRole === 'manager')">
+    <div class="col-md-12">
+    <textarea style="width: 100%;" name="comment" rows="3" cols="auto"  placeholder="Enter Text Comment here" #content></textarea>
+    <div class="mt-1">
+        <button  style="padding: 7px; align-self: center;" type="submit" name="button" class="btn btn-md btn-warning" (click)="onAddComment(post.id, content)"><span class="glyphicon glyphicon-comment"></span> Add text Comment </button>
+        <span>  or  </span>
+        <button  style="padding: 7px; align-self: center;" type="submit" name="button" class="btn btn-md btn-info" (click)="filePicker.click()"><span class="glyphicon glyphicon-picture"></span> Add Image Comment </button>
+        <div class="image-preview" *ngIf=" postType == 'IMAGE' && postValueMedia !=='' && postValueMedia ">
+            <img [src]="postValueMedia" alt="Please Select an Image to comment">
+        </div>
+        <input style="visibility: hidden;" type="file" #filePicker (change)="onImagePicked($event, post.id)">
+    </div>
+    </div>
+</div>
+<mat-expansion-panel [expanded]="true" class="mt-2"  style=" border: 1px solid black; ">
+    <mat-expansion-panel-header>
+      <mat-panel-title style="font-weight: 1000; font-size: 18px;">
+        Comments
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+  
+
+    <div *ngFor="let comment of post.comments.slice().reverse();" style="background-color:#f2f3f5; font-size: 18px; border-radius: 10px; margin-top: 3px; padding: 10px; ">
+        <div *ngIf=" comment!== undefined">
+            <span style="font-weight: 1000; text-decoration: underline; color: blue;">{{comment.commentator}}</span><span> : </span>
+            <span style="color: black; ">{{comment.comment}}</span>
+            <div *ngIf="comment.replies.length!==0" style="background-color: white; border-radius: 10px; margin: 3px auto auto 50px; padding: 5px;">
+                <div>Replies to this comment</div>
+                <div *ngFor="let rep of comment.replies">                    
+                <span style="font-weight: 1000; text-decoration: underline; color: blue;">{{rep.replier}}</span><span> : </span>
+                <span style="color: black; ">{{rep.reply}}</span>
+                </div>
+            </div>
+            <div *ngIf="userIsAuthenticated && !(userRole === 'admin' || userRole === 'editor' || userRole === 'manager' )" style="padding-top: 12px;">
+                <input #reply style="margin-right:6px; padding: 5px; border: 10px;" type="text" placeholder="write comment reply here" >
+                <button style="width: 80px; height: 30px; padding: 0px;" type="submit" class="btn btn-md btn-success" (click) ="postReply(post.id, comment._id, reply, comment.comment)">Post Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngFor="let pic of post.piccomments.slice().reverse();" style="font-size: 18px; border-radius: 10px; margin-top: 3px; padding: 10px; ">
+    <div *ngIf="pic !== undefined ">
+        <div style="font-weight: 1000; text-decoration: underline; color: blue;">{{pic.commentator}}</div>
+        <img class="img-fluid" style="width: 40%; height:40%;" [src]="pic.commentpic" alt="Image not avialable">
+        <div *ngIf="pic.replies.length!==0" style="background-color: #f2f3f5; border-radius: 10px; margin: 3px auto auto 50px; padding: 5px;">
+            <div>Replies to this comment</div>
+            <div *ngFor="let rep of pic.replies">                    
+            <span style="font-weight: 1000; text-decoration: underline; color: blue;">{{rep.replier}}</span><span> : </span>
+            <span style="color: black; ">{{rep.reply}}</span>
+            </div>
+        </div>
+        <div *ngIf="(userIsAuthenticated) && !(userRole === 'admin' || userRole === 'editor' || userRole === 'manager' )" style="padding-top: 12px;">
+            <input #reply style="margin-right:6px; padding: 5px;" type="text" placeholder="write comment reply here" >
+            <button style="width: 80px; height: 30px; padding: 0px;" type="submit" class="btn btn-md btn-success" (click) ="postReply(post.id, pic._id, reply, pic.commentpic)">Post Reply</button>
+        </div>
+    </div>
+    </div>
+  
+  </mat-expansion-panel>
+<!-- <div *ngFor="let i=0; i<posts.length; i++"></div> -->
+<!-- <div *ngFor="let comment of post.comments" style="background-color:lightgray; border-radius: 5px; margin-top: 2px; padding-left: 10px;">
+<span style="font-weight: 1000; font-size:18px; ">Commentator: {{comment.commentator}}</span>
+<br>    
+<span class="">Comment: {{comment.comment}}</span>
+</div> -->
+<!-- <div *ngIf="posthasComment">
+    Comment: {{post.comments[0].comment}}
+</div> -->
+
+</div>
+</mat-card>
+<!-- loop end -->
+</div>
+</div>
+<!-- ----------------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------------- -->
+
+<p class="mat-body-1 info-text" *ngIf="posts.length <=0">No Posts to show</p>
+

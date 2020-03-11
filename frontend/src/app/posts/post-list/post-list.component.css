@@ -1,0 +1,62 @@
+mat-card {
+    width: 50%;
+    margin: auto;
+    margin-bottom: 1rem;
+}
+
+.info-text {
+    text-align: center;
+    font-size: medium;
+    font-weight: 1000;
+}
+
+.post-image {
+    width: 100%;
+}
+
+.post-image img {
+    width: 100%;
+    height: 400px;
+    box-shadow: 1px 1px 1px rgba(1,1,1,1);
+}
+
+.profilepic {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    margin-left: 10px;
+
+}
+
+.content {
+    text-align: justify;
+    font-size: 18px;
+    font-family: sans-serif, calibri;
+}
+
+.postview {
+    font-family: sans-serif, calibri;
+    font-size: 14px;
+}
+
+.view {
+    text-align: center;
+    font-family: sans-serif, calibri;
+}
+
+input[type="file"] {
+    visibility: hidden;
+}
+
+.image-preview {
+    height: 5rem;
+    margin: 1rem 0;
+}
+
+.image-preview img {
+    height: 100%;
+}
+
+.likeClass {
+    background-color: red;
+}

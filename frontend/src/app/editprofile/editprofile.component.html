@@ -1,0 +1,24 @@
+
+<div class="header">Edit your profile here</div>
+
+<mat-card>
+    <form (submit)="onSubmit(signupForm)" #signupForm="ngForm">
+      <mat-form-field>
+        <input matInput name="fname" ngModel type="text" placeholder="First Name" [(ngModel)]="userData.fname" #fnameInput="ngModel" required>
+        <mat-error *ngIf="fnameInput.invalid">Please enter first name.</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput name="lname" ngModel type="text" placeholder="Last Name" [(ngModel)]="userData.lname" #lnameInput="ngModel" required>
+        <mat-error *ngIf="lnameInput.invalid">Please enter last name.</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput name="email" ngModel type="email" placeholder="E-Mail" [(ngModel)]="userData.email" #emailInput="ngModel" required email>
+        <mat-error *ngIf="emailInput.invalid">Please enter a valid email.</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input type="text" name="password" ngModel matInput placeholder="Password" [(ngModel)]="userData.password" #passwordInput="ngModel" required>
+        <mat-error *ngIf="passwordInput.invalid">Please enter a valid password.</mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="accent" type="submit">Save Profile</button>
+    </form>
+  </mat-card>
